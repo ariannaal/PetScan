@@ -1,5 +1,6 @@
 package com.example.PetScan.entities;
 
+import com.example.PetScan.enums.PetType;
 import jakarta.persistence.*;
 
 import java.util.UUID;
@@ -12,14 +13,15 @@ public class NormalValues {
     @GeneratedValue
     private UUID id;
 
-    private String testName;
+    @ManyToOne
+    @JoinColumn(name = "values_name_id")
+    private ValuesName valuesName;
+
     private String minValue;
     private String maxValue;
     private String unit;
-
-    @ManyToOne
-    @JoinColumn(name = "blood_test_id")
-    private BloodTest bloodTest;
+    @Enumerated(EnumType.STRING)
+    private PetType petType;
 
     @ManyToOne
     @JoinColumn(name = "results_id")
@@ -28,12 +30,11 @@ public class NormalValues {
     public NormalValues() {
     }
 
-    public NormalValues(String testName, String minValue, String maxValue, String unit, BloodTest bloodTest, Result result) {
-        this.testName = testName;
+    public NormalValues(ValuesName valuesName, String minValue, String maxValue, String unit, Result result) {
+        this.valuesName = valuesName;
         this.minValue = minValue;
         this.maxValue = maxValue;
         this.unit = unit;
-        this.bloodTest = bloodTest;
         this.result = result;
     }
 
@@ -41,13 +42,12 @@ public class NormalValues {
         return id;
     }
 
-
-    public String getTestName() {
-        return testName;
+    public ValuesName getValuesName() {
+        return valuesName;
     }
 
-    public void setTestName(String testName) {
-        this.testName = testName;
+    public void setValuesName(ValuesName valuesName) {
+        this.valuesName = valuesName;
     }
 
     public String getMinValue() {
@@ -72,14 +72,6 @@ public class NormalValues {
 
     public void setUnit(String unit) {
         this.unit = unit;
-    }
-
-    public BloodTest getBloodTest() {
-        return bloodTest;
-    }
-
-    public void setBloodTest(BloodTest bloodTest) {
-        this.bloodTest = bloodTest;
     }
 
     public Result getResult() {
