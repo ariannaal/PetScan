@@ -36,7 +36,7 @@ public class Pet {
     public Pet() {
     }
 
-    public Pet(PetType petType, String name, String breed, Gender gender, int age, LocalDate dateOfBirth, String picture, Owner owner) {
+    public Pet(PetType petType, String name, String breed, Gender gender, int age, LocalDate dateOfBirth, Owner owner) {
         this.petType = petType;
         this.name = name;
         this.breed = breed;
