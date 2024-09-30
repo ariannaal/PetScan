@@ -1,7 +1,10 @@
 package com.example.PetScan.entities;
 
+import com.example.PetScan.enums.PetType;
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -12,42 +15,43 @@ public class BloodTest {
     @GeneratedValue
     private UUID id;
 
-    private String testName;
-    private double minValue;
-    private double maxValue;
+    private String testNumber;
 
     @ManyToOne
     @JoinColumn(name = "pet_id")
     private Pet pet;
 
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
+    private Owner owner;
+
+    private LocalDate dateOfTest;
+
+    @Enumerated(EnumType.STRING)
+    private PetType petType;
+
     public BloodTest() {
     }
 
-    public BloodTest(String testName, double minValue, double maxValue, Pet pet) {
-        this.testName = testName;
-        this.minValue = minValue;
-        this.maxValue = maxValue;
+    public BloodTest(String testNumber, Pet pet, Owner owner, LocalDate dateOfTest, PetType petType) {
+        this.testNumber = testNumber;
         this.pet = pet;
+        this.owner = owner;
+        this.dateOfTest = dateOfTest;
+        this.petType = petType;
     }
 
     public UUID getId() {
         return id;
     }
 
-    public String getTestName() {
-        return testName;
+    public String getTestNumber() {
+        return testNumber;
     }
 
-
-    public double getMinValue() {
-        return minValue;
+    public void setTestNumber(String testNumber) {
+        this.testNumber = testNumber;
     }
-
-
-    public double getMaxValue() {
-        return maxValue;
-    }
-
 
     public Pet getPet() {
         return pet;
@@ -55,5 +59,29 @@ public class BloodTest {
 
     public void setPet(Pet pet) {
         this.pet = pet;
+    }
+
+    public Owner getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Owner owner) {
+        this.owner = owner;
+    }
+
+    public LocalDate getDateOfTest() {
+        return dateOfTest;
+    }
+
+    public void setDateOfTest(LocalDate dateOfTest) {
+        this.dateOfTest = dateOfTest;
+    }
+
+    public PetType getPetType() {
+        return petType;
+    }
+
+    public void setPetType(PetType petType) {
+        this.petType = petType;
     }
 }

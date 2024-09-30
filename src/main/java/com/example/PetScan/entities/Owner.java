@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -25,6 +26,9 @@ public class Owner implements UserDetails {
     private LocalDate dateOfBirth;
     private String email;
     private String password;
+
+    @OneToMany(mappedBy = "owner")
+    private Set<BloodTest> bloodTests;
 
     public Owner() {
     }

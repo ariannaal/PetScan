@@ -43,7 +43,6 @@ public class Pet {
         this.gender = gender;
         this.age = age;
         this.dateOfBirth = dateOfBirth;
-        this.picture = picture;
         this.owner = owner;
     }
 
