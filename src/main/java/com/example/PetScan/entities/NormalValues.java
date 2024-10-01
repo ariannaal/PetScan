@@ -22,10 +22,7 @@ public class NormalValues {
     private String unit;
     @Enumerated(EnumType.STRING)
     private PetType petType;
-
-    @ManyToOne
-    @JoinColumn(name = "results_id")
-    private Result result;
+    
 
     public NormalValues() {
     }
@@ -35,7 +32,6 @@ public class NormalValues {
         this.minValue = minValue;
         this.maxValue = maxValue;
         this.unit = unit;
-        this.result = result;
     }
 
     public UUID getId() {
@@ -74,11 +70,4 @@ public class NormalValues {
         this.unit = unit;
     }
 
-    public Result getResult() {
-        return result;
-    }
-
-    public void setResult(Result result) {
-        this.result = result;
-    }
 }

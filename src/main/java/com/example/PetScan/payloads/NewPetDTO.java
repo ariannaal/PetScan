@@ -13,7 +13,7 @@ import java.util.UUID;
 public record NewPetDTO(
 
         @NotEmpty(message = "Il nome dell'animale e' obbligatorio!")
-        @Size(min = 5, max = 15, message = "Lo nome deve essere compreso tra 5 e 15 caratteri")
+        @Size(min = 2, max = 15, message = "Lo nome deve essere compreso tra 5 e 15 caratteri")
         String name,
 
         @NotNull(message = "Il genere e' obbligatorio!")
@@ -32,7 +32,7 @@ public record NewPetDTO(
         @NotNull(message = "La data di nascita dell'animale e' obbligatoria!")
         LocalDate dateOfBirth,
 
-        @NotEmpty(message = "L'id del proprietario e' obbligatorio!")
+        @NotNull(message = "L'id del proprietario e' obbligatorio!")
         UUID ownerId
 
 ) {
