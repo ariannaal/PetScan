@@ -2,6 +2,7 @@ package com.example.PetScan.entities;
 
 import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -21,6 +22,9 @@ public class Result {
     @ManyToOne
     @JoinColumn(name = "values_name_id")
     private ValuesName valuesName;
+
+    @ManyToMany(mappedBy = "results")
+    private List<DiseaseTest> diseaseTests;
 
     public Result() {
     }

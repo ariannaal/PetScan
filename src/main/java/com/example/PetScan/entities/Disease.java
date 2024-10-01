@@ -1,5 +1,6 @@
 package com.example.PetScan.entities;
 
+import com.example.PetScan.enums.PetType;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -16,15 +17,18 @@ public class Disease {
     private String diseaseName;
     private String description;
     private String treatment;
+    @Enumerated(EnumType.STRING)
+    private PetType petType;
 
 
     public Disease() {
     }
 
-    public Disease(String diseaseName, String description, String treatment) {
+    public Disease(String diseaseName, String description, String treatment, PetType petType) {
         this.diseaseName = diseaseName;
         this.description = description;
         this.treatment = treatment;
+        this.petType = petType;
     }
 
     public UUID getId() {
@@ -53,5 +57,13 @@ public class Disease {
 
     public void setTreatment(String treatment) {
         this.treatment = treatment;
+    }
+
+    public PetType getPetType() {
+        return petType;
+    }
+
+    public void setPetType(PetType petType) {
+        this.petType = petType;
     }
 }

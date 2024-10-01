@@ -15,7 +15,7 @@ public class BloodTest {
     @GeneratedValue
     private UUID id;
 
-    private String testNumber;
+    private int testNumber;
 
     @ManyToOne
     @JoinColumn(name = "pet_id")
@@ -33,7 +33,7 @@ public class BloodTest {
     public BloodTest() {
     }
 
-    public BloodTest(String testNumber, Pet pet, Owner owner, LocalDate dateOfTest, PetType petType) {
+    public BloodTest(int testNumber, Pet pet, Owner owner, LocalDate dateOfTest, PetType petType) {
         this.testNumber = testNumber;
         this.pet = pet;
         this.owner = owner;
@@ -45,11 +45,11 @@ public class BloodTest {
         return id;
     }
 
-    public String getTestNumber() {
+    public int getTestNumber() {
         return testNumber;
     }
 
-    public void setTestNumber(String testNumber) {
+    public void setTestNumber(int testNumber) {
         this.testNumber = testNumber;
     }
 

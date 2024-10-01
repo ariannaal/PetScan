@@ -1,7 +1,9 @@
 package com.example.PetScan.entities;
 
+import com.example.PetScan.enums.AbnormalValueLevel;
 import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -16,22 +18,27 @@ public class DiseaseTest {
     @JoinColumn(name = "disease_id")
     private Disease disease;
 
-    @ManyToOne
-    @JoinColumn(name = "blood_tests_id")
-    private BloodTest bloodTest;
+    @ManyToMany
+    @JoinTable(name = "disease_test_results", joinColumns = @JoinColumn(name = "disease_test_id"), inverseJoinColumns = @JoinColumn(name = "result_id"))
+    private List<Result> results;
 
-    private String abnormalValue;
+    @OneToOne
+    private ValuesName abnormalValueName;
 
     private int threshold;
+
+    @Enumerated(EnumType.STRING)
+    private AbnormalValueLevel abnormalValueLevel;
 
     public DiseaseTest() {
     }
 
-    public DiseaseTest(Disease disease, BloodTest bloodTest, String abnormalValue, int threshold) {
+    public DiseaseTest(Disease disease, List<Result> results, ValuesName abnormalValueName, int threshold, AbnormalValueLevel abnormalValueLevel) {
         this.disease = disease;
-        this.bloodTest = bloodTest;
-        this.abnormalValue = abnormalValue;
+        this.results = results;
+        this.abnormalValueName = abnormalValueName;
         this.threshold = threshold;
+        this.abnormalValueLevel = abnormalValueLevel;
     }
 
     public UUID getId() {
@@ -47,20 +54,28 @@ public class DiseaseTest {
         this.disease = disease;
     }
 
-    public BloodTest getBloodTest() {
-        return bloodTest;
+    public List<Result> getResults() {
+        return results;
     }
 
-    public void setBloodTest(BloodTest bloodTest) {
-        this.bloodTest = bloodTest;
+    public void setResults(List<Result> results) {
+        this.results = results;
     }
 
-    public String getAbnormalValue() {
-        return abnormalValue;
+    public ValuesName getAbnormalValueName() {
+        return abnormalValueName;
     }
 
-    public void setAbnormalValue(String abnormalValue) {
-        this.abnormalValue = abnormalValue;
+    public void setAbnormalValueName(ValuesName abnormalValueName) {
+        this.abnormalValueName = abnormalValueName;
+    }
+
+    public AbnormalValueLevel getAbnormalValueLevel() {
+        return abnormalValueLevel;
+    }
+
+    public void setAbnormalValueLevel(AbnormalValueLevel abnormalValueLevel) {
+        this.abnormalValueLevel = abnormalValueLevel;
     }
 
     public int getThreshold() {
