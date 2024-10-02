@@ -42,9 +42,9 @@ public class ResultService {
             Result result = new Result(bloodTest, resultValueDTO.value().toString(), valuesName);
 
             savedResults.add(resultRepository.save(result));
-            System.out.println("I risultati dell'esame nr. " + result.getBloodTest().getTestNumber() + " per l'animale " + result.getBloodTest().getPet().getName() + " sono stati salvati con successo!");
-        }
 
+        }
+        System.out.println("I risultati dell'esame con id " + body.bloodTestId() + " sono stati salvati con successo!");
         return savedResults;
     }
 
@@ -52,6 +52,13 @@ public class ResultService {
         BloodTest bloodTest = bloodTestRepository.findById(bloodTestId)
                 .orElseThrow(() -> new NotFoundEx("Esame del sangue non trovato con ID: " + bloodTestId));
 
+        List<Result> results = resultRepository.findByBloodTest(bloodTest);
+
+
         return resultRepository.findByBloodTest(bloodTest);
     }
+//
+//    public List<Result> getAbnormalResults() {
+//        return resultRepository.findAbnormalTestResults();
+//    }
 }

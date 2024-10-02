@@ -20,7 +20,7 @@ public record NewPetDTO(
         PetType petType,
 
         @NotEmpty(message = "La razza dell'animale e' obbligatoria!")
-        @Size(min = 5, max = 15, message = "La razza dell'animale deve essere compreso tra 5 e 15 caratteri")
+        @Size(min = 5, max = 30, message = "La razza dell'animale deve essere compreso tra 5 e 15 caratteri")
         String breed,
 
         @NotNull(message = "Il genere dell'animale e' obbligatorio!")

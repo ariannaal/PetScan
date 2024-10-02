@@ -1,17 +1,14 @@
 package com.example.PetScan.services;
 
-import com.example.PetScan.entities.BloodTest;
-import com.example.PetScan.entities.Owner;
-import com.example.PetScan.entities.Pet;
+import com.example.PetScan.entities.*;
 import com.example.PetScan.exceptions.NotFoundEx;
 import com.example.PetScan.payloads.NewBloodTestDTO;
 import com.example.PetScan.payloads.NewPetDTO;
-import com.example.PetScan.repositories.BloodTestRepository;
-import com.example.PetScan.repositories.OwnerRepository;
-import com.example.PetScan.repositories.PetRepository;
+import com.example.PetScan.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +23,15 @@ public class BloodTestService {
 
     @Autowired
     private PetRepository petRepository;
+
+    @Autowired
+    private ResultRepository resultRepository;
+
+    @Autowired
+    private NormalValuesRepository normalValuesRepository;
+
+    @Autowired
+    private DiseaseTestRepository diseaseTestRepository;
 
     public BloodTest saveBloodTest(NewBloodTestDTO body) {
         Owner owner = ownerRepository.findById(body.ownerId())
@@ -48,5 +54,7 @@ public class BloodTestService {
     public Optional<Owner> findByPet(Pet pet){
         return bloodTestRepository.findByPet(pet);
     }
+
+
 
 }

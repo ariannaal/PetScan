@@ -11,11 +11,11 @@ import java.time.LocalDate;
 public record NewOwnerDTO(
 
         @NotEmpty(message = "Il nome e' obbligatorio!")
-        @Size(min = 5, max = 15, message = "Lo nome deve essere compreso tra 5 e 15 caratteri")
+        @Size(min = 3, max = 15, message = "Il nome deve essere compreso tra 5 e 15 caratteri")
         String name,
 
         @NotEmpty(message = "Il cognome e' obbligatorio!")
-        @Size(min = 5, max = 15, message = "Il cognome deve essere compreso tra 5 e 15 caratteri")
+        @Size(min = 3, max = 15, message = "Il cognome deve essere compreso tra 5 e 15 caratteri")
         String surname,
 
         @NotNull(message = "Il genere e' obbligatorio!")

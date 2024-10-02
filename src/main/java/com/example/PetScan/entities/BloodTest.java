@@ -30,6 +30,9 @@ public class BloodTest {
     @Enumerated(EnumType.STRING)
     private PetType petType;
 
+    @OneToMany(mappedBy = "bloodTest")
+    private List<Result> results;
+
     public BloodTest() {
     }
 
@@ -83,5 +86,13 @@ public class BloodTest {
 
     public void setPetType(PetType petType) {
         this.petType = petType;
+    }
+
+    public List<Result> getResults() {
+        return results;
+    }
+
+    public void setResults(List<Result> results) {
+        this.results = results;
     }
 }

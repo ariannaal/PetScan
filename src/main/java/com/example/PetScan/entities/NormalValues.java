@@ -17,8 +17,8 @@ public class NormalValues {
     @JoinColumn(name = "values_name_id")
     private ValuesName valuesName;
 
-    private String minValue;
-    private String maxValue;
+    private Double  minValue;
+    private Double  maxValue;
     private String unit;
     @Enumerated(EnumType.STRING)
     private PetType petType;
@@ -27,7 +27,7 @@ public class NormalValues {
     public NormalValues() {
     }
 
-    public NormalValues(ValuesName valuesName, String minValue, String maxValue, String unit, Result result) {
+    public NormalValues(ValuesName valuesName, Double  minValue, Double  maxValue, String unit, Result result) {
         this.valuesName = valuesName;
         this.minValue = minValue;
         this.maxValue = maxValue;
@@ -46,19 +46,19 @@ public class NormalValues {
         this.valuesName = valuesName;
     }
 
-    public String getMinValue() {
+    public Double  getMinValue() {
         return minValue;
     }
 
-    public void setMinValue(String minValue) {
+    public void setMinValue(Double  minValue) {
         this.minValue = minValue;
     }
 
-    public String getMaxValue() {
+    public Double  getMaxValue() {
         return maxValue;
     }
 
-    public void setMaxValue(String maxValue) {
+    public void setMaxValue(Double  maxValue) {
         this.maxValue = maxValue;
     }
 
