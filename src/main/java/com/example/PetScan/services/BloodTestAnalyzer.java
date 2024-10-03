@@ -4,7 +4,9 @@ import com.example.PetScan.entities.BloodTest;
 import com.example.PetScan.entities.DiseaseTest;
 import com.example.PetScan.entities.NormalValues;
 import com.example.PetScan.entities.Result;
+import com.example.PetScan.enums.AbnormalValueLevel;
 import com.example.PetScan.enums.PetType;
+import com.example.PetScan.payloads.BloodTestAnalysisDTO;
 import com.example.PetScan.payloads.NewResultsDTO;
 import com.example.PetScan.payloads.ResultValueDTO;
 import com.example.PetScan.repositories.BloodTestRepository;
@@ -30,40 +32,64 @@ public class BloodTestAnalyzer {
     private BloodTestRepository bloodTestRepository;
 
     // confronto tra valori normali e valori patologici dell'input di valori ricevuti dall'esame del sangue
-    public List<String> analyzeBloodTest(NewResultsDTO newResultsDTO) {
-        List<String> analysisResults = new ArrayList<>();
+    public List<BloodTestAnalysisDTO> analyzeBloodTest(NewResultsDTO newResultsDTO) {
+        List<BloodTestAnalysisDTO> analysisResults = new ArrayList<>();
 
         List<ResultValueDTO> results = newResultsDTO.results();
 
         PetType petType = bloodTestRepository.findPetTypeByBloodTestId(newResultsDTO.bloodTestId());
 
-        for (ResultValueDTO result : results) { // per ogni risultato su cui ho itero estraggo l'id e il valore
+        for (ResultValueDTO result : results) {
             UUID id = result.valuesNameId();
             Double value = result.value();
 
             List<NormalValues> normalValueList = normalValuesRepository.findByValuesNameIdAndPetType(id, petType);
 
-            for (int i = 0; i < normalValueList.size(); i++) {
-                NormalValues normalValue = normalValueList.get(i);
+            for (NormalValues normalValue : normalValueList) {
                 String valueName = normalValue.getValuesName().getNameOfValue();
+                Double minValue = normalValue.getMinValue();
+                Double maxValue = normalValue.getMaxValue();
+                String unit = normalValue.getUnit();
+                String pathologicalCondition = null;
 
-               // confronto il valore del parametro con i range minimo e massimi entro cui considerato normale
-                if (value < normalValue.getMinValue() || value > normalValue.getMaxValue()) {
-                    analysisResults.add(valueName + " è anormale: " + value + " " + normalValue.getUnit());
+                //determino il valore di riferimento
+                Double referenceValue;
+                if (value < minValue) {
+                    referenceValue = minValue;  // valore minimo in caso di anomalia
+                } else {
+                    referenceValue = maxValue;   // valore massimo in caso di anomalia
+                }
 
-                    // cerco patologie associate al valore anomalo
+                // confronto il valore del parametro con i range minimo e massimi entro cui considerato normale
+                if (value < minValue || value > maxValue) {
+                    // trova se ci sono le patologie associate al valore anomalo
                     List<DiseaseTest> diseaseTests = diseaseTestRepository.findByAbnormalValueNameAndPetType(normalValue.getValuesName(), petType);
                     for (DiseaseTest diseaseTest : diseaseTests) {
-                        if (value > diseaseTest.getThreshold()) {
-                            analysisResults.add("Possibile quadro patologico: " + diseaseTest.getDisease().getDiseaseName());
+                        if (value < minValue && diseaseTest.getAbnormalValueLevel() == AbnormalValueLevel.LOW) {
+                            pathologicalCondition = diseaseTest.getDisease().getDiseaseName();
+                        } else if (value > maxValue && diseaseTest.getAbnormalValueLevel() == AbnormalValueLevel.HIGH) {
+                            pathologicalCondition = diseaseTest.getDisease().getDiseaseName();
                         }
                     }
+
+                    analysisResults.add(new BloodTestAnalysisDTO(
+                            valueName,
+                            value,
+                            referenceValue,
+                            unit,
+                            pathologicalCondition // possibile patologia associata
+                    ));
                 } else {
-                    analysisResults.add(value + " è normale: " + value + " " + normalValue.getUnit());
+                    analysisResults.add(new BloodTestAnalysisDTO(
+                            valueName,
+                            value,
+                            referenceValue,
+                            unit,
+                            null  // nessun quadro patologico in caso di valore normale
+                    ));
                 }
             }
         }
-
         return analysisResults;
     }
 }

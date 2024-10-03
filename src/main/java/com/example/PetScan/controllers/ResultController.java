@@ -2,6 +2,7 @@ package com.example.PetScan.controllers;
 
 import com.example.PetScan.entities.Result;
 import com.example.PetScan.exceptions.BadRequestEx;
+import com.example.PetScan.payloads.BloodTestAnalysisDTO;
 import com.example.PetScan.payloads.NewResultsDTO;
 import com.example.PetScan.services.BloodTestAnalyzer;
 import com.example.PetScan.services.ResultService;
@@ -41,7 +42,7 @@ public class ResultController {
     }
 
     @PostMapping("/analyze")
-    public List<String> analyze(@RequestBody @Validated NewResultsDTO newResultsDTO, BindingResult validation) {
+    public List<BloodTestAnalysisDTO> analyze(@RequestBody @Validated NewResultsDTO newResultsDTO, BindingResult validation) {
         if (validation.hasErrors()) {
             throw new BadRequestEx(validation.getAllErrors().toString());
         }
