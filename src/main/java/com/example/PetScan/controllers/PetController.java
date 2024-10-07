@@ -1,5 +1,6 @@
 package com.example.PetScan.controllers;
 
+import com.example.PetScan.common.TokenManager;
 import com.example.PetScan.entities.Owner;
 import com.example.PetScan.entities.Pet;
 import com.example.PetScan.exceptions.BadRequestEx;
@@ -11,12 +12,15 @@ import com.example.PetScan.repositories.PetRepository;
 import com.example.PetScan.services.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -45,18 +49,26 @@ public class PetController {
         return petService.savePet(body);
     }
 
-    // GET http://localhost:3001/pets / {id}
+    // GET http://localhost:3001/pets/{id}
     @GetMapping("/{id}")
     private Pet getSinglePet(@PathVariable UUID id){
         return petService.findById(id);
     }
 
-    // **GET http://localhost:3001/pets
     @GetMapping
-    public List<Pet> getAllPets() {
-        return petService.petsList();
-    }
+    public List<Pet> getPets() {
+        List<Pet> pets = new ArrayList<>();
 
+        try{
+            UUID ownerId = TokenManager.GetId(SecurityContextHolder.getContext());
+            pets = petService.getPetsByOwnerId(ownerId);
+
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
+        return pets;
+    }
 
     // POST http://localhost:3001/pets/{id}/picture
     @PostMapping("/{id}/picture")

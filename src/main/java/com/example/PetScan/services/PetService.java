@@ -62,6 +62,10 @@ public class PetService {
         petRepository.delete(found);
     }
 
+    public List<Pet> getPetsByOwnerId(UUID ownerId) {
+        return petRepository.findByOwnerId(ownerId);
+    }
+
     public Pet findByIdAndUpdate(UUID id, Pet body) {
         Pet found = this.findById(id);
         found.setAge(body.getAge());

@@ -28,4 +28,5 @@ public record NewBloodTestDTO(
         UUID petId
 
 ) {
+
 }
