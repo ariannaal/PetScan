@@ -17,7 +17,7 @@ public class Result {
     @JoinColumn(name = "blood_tests_id")
     private BloodTest bloodTest;
 
-    private String value;
+    private double value;
 
     @ManyToOne
     @JoinColumn(name = "values_name_id")
@@ -29,7 +29,7 @@ public class Result {
     public Result() {
     }
 
-    public Result(BloodTest bloodTest, String value, ValuesName valuesName) {
+    public Result(BloodTest bloodTest, double value, ValuesName valuesName) {
         this.bloodTest = bloodTest;
         this.value = value;
         this.valuesName = valuesName;
@@ -39,6 +39,7 @@ public class Result {
         return id;
     }
 
+
     public BloodTest getBloodTest() {
         return bloodTest;
     }
@@ -47,11 +48,11 @@ public class Result {
         this.bloodTest = bloodTest;
     }
 
-    public String getValue() {
+    public double getValue() {
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(double value) {
         this.value = value;
     }
 

@@ -6,6 +6,7 @@ import com.example.PetScan.entities.NormalValues;
 import com.example.PetScan.entities.Result;
 import com.example.PetScan.enums.AbnormalValueLevel;
 import com.example.PetScan.enums.PetType;
+import com.example.PetScan.exceptions.NotFoundEx;
 import com.example.PetScan.payloads.BloodTestAnalysisDTO;
 import com.example.PetScan.payloads.NewResultsDTO;
 import com.example.PetScan.payloads.ResultValueDTO;
@@ -31,6 +32,11 @@ public class BloodTestAnalyzer {
     @Autowired
     private BloodTestRepository bloodTestRepository;
 
+    public BloodTest getResultsByBloodTestId(UUID bloodTestId) {
+        return bloodTestRepository.findById(bloodTestId)
+                .orElseThrow(() -> new NotFoundEx("Esame del sangue non trovato con id: " + bloodTestId));
+    }
+
     // confronto tra valori normali e valori patologici dell'input di valori ricevuti dall'esame del sangue
     public List<BloodTestAnalysisDTO> analyzeBloodTest(NewResultsDTO newResultsDTO) {
         List<BloodTestAnalysisDTO> analysisResults = new ArrayList<>();
@@ -41,7 +47,8 @@ public class BloodTestAnalyzer {
 
         for (ResultValueDTO result : results) {
             UUID id = result.valuesNameId();
-            Double value = result.value();
+            Double value = Double.valueOf(result.value());
+
 
             List<NormalValues> normalValueList = normalValuesRepository.findByValuesNameIdAndPetType(id, petType);
 

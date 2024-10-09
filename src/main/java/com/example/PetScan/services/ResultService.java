@@ -4,6 +4,7 @@ import com.example.PetScan.entities.BloodTest;
 import com.example.PetScan.entities.Result;
 import com.example.PetScan.entities.ValuesName;
 import com.example.PetScan.exceptions.NotFoundEx;
+import com.example.PetScan.payloads.BloodTestAnalysisDTO;
 import com.example.PetScan.payloads.NewResultsDTO;
 import com.example.PetScan.payloads.ResultValueDTO;
 import com.example.PetScan.repositories.BloodTestRepository;
@@ -39,7 +40,8 @@ public class ResultService {
             ValuesName valuesName = valuesNameRepository.findById(resultValueDTO.valuesNameId())
                     .orElseThrow(() -> new NotFoundEx("Nome del valore non trovato con ID: " + resultValueDTO.valuesNameId()));
 
-            Result result = new Result(bloodTest, resultValueDTO.value().toString(), valuesName);
+
+            Result result = new Result(bloodTest, resultValueDTO.value(), valuesName);
 
             savedResults.add(resultRepository.save(result));
 
@@ -57,6 +59,9 @@ public class ResultService {
 
         return resultRepository.findByBloodTest(bloodTest);
     }
+
+
+
 //
 //    public List<Result> getAbnormalResults() {
 //        return resultRepository.findAbnormalTestResults();

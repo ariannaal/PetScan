@@ -3,6 +3,7 @@ package com.example.PetScan.repositories;
 import com.example.PetScan.entities.BloodTest;
 import com.example.PetScan.entities.Result;
 import com.example.PetScan.enums.PetType;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
