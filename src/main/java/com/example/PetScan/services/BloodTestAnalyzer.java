@@ -37,6 +37,10 @@ public class BloodTestAnalyzer {
                 .orElseThrow(() -> new NotFoundEx("Esame del sangue non trovato con id: " + bloodTestId));
     }
 
+    public List<BloodTest> findBloodTestsByOwnerAndPet(UUID ownerId, UUID petId) {
+        return bloodTestRepository.findByOwnerIdAndPetId(ownerId, petId);
+    }
+
     // confronto tra valori normali e valori patologici dell'input di valori ricevuti dall'esame del sangue
     public List<BloodTestAnalysisDTO> analyzeBloodTest(NewResultsDTO newResultsDTO) {
         List<BloodTestAnalysisDTO> analysisResults = new ArrayList<>();

@@ -1,5 +1,6 @@
 package com.example.PetScan.payloads;
 
+import com.example.PetScan.enums.AbnormalValueLevel;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
@@ -13,9 +14,9 @@ public record ResultValueDTO(
         UUID valuesNameId,
 
         String valueName,
-        Double referenceValue,
         List<String> unit,
-        String pathologicalCondition
+        String pathologicalCondition,
+        AbnormalValueLevel abnormalLevel
 
 ) {
 }

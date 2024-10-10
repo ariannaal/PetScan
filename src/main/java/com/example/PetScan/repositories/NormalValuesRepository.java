@@ -30,8 +30,10 @@ public interface NormalValuesRepository extends JpaRepository<NormalValues, UUID
 
     List<NormalValues> findByPetType(PetType petType);
 
-    @Query("SELECT n.unit FROM NormalValues n WHERE n.valuesName.id = :id")
-    List<String> findUnitsByValuesNameId(@Param("id") UUID id);
+
+
+    @Query("SELECT n.unit FROM NormalValues n WHERE n.valuesName.id = :id AND n.petType = :petType")
+    List<String> findUnitsByValuesNameIdAndPetType(@Param("id") UUID id, @Param("petType") PetType petType);
 
 
 

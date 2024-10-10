@@ -1,11 +1,11 @@
 package com.example.PetScan.controllers;
 
-import com.example.PetScan.entities.BloodTest;
-import com.example.PetScan.entities.DiseaseTest;
-import com.example.PetScan.entities.NormalValues;
-import com.example.PetScan.entities.Result;
+import com.example.PetScan.entities.*;
+import com.example.PetScan.enums.AbnormalValueLevel;
+import com.example.PetScan.enums.PetType;
 import com.example.PetScan.exceptions.BadRequestEx;
 import com.example.PetScan.payloads.BloodTestAnalysisDTO;
+import com.example.PetScan.payloads.CompleteBloodTestDTO;
 import com.example.PetScan.payloads.NewResultsDTO;
 import com.example.PetScan.payloads.ResultValueDTO;
 import com.example.PetScan.repositories.DiseaseTestRepository;
@@ -17,11 +17,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -43,11 +41,14 @@ public class ResultController {
     // POST http://localhost:3001/results
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void saveResults(@RequestBody @Validated NewResultsDTO body, BindingResult validation) {
+    public Map<String, String> saveResults(@RequestBody @Validated NewResultsDTO body, BindingResult validation) {
         if (validation.hasErrors()) {
             throw new BadRequestEx(validation.getAllErrors().toString());
         }
         resultService.saveResult(body);
+
+        // Restituisci un oggetto JSON vuoto
+        return Collections.singletonMap("message", "Risultato salvato con successo");
     }
 
     // GET http://localhost:3001/results/bloodTest/{bloodTestId}
@@ -66,26 +67,47 @@ public class ResultController {
         return result;
     }
 
+
     @GetMapping("/{bloodTestId}/values")
-    public List<ResultValueDTO> getResultsByBloodTestId(@PathVariable UUID bloodTestId) {
+    public CompleteBloodTestDTO getResultsByBloodTestId(@PathVariable UUID bloodTestId) {
+        System.out.println("Richiesta GET per bloodTestId: " + bloodTestId);
+
         BloodTest bloodTest = bloodTestAnalyzer.getResultsByBloodTestId(bloodTestId);
 
-        return bloodTest.getResults().stream()
+        if (bloodTest == null) {
+            System.out.println("Nessun BloodTest trovato con ID: " + bloodTestId);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Nessun BloodTest trovato con ID: " + bloodTestId);
+        }
+
+        Pet pet = bloodTest.getPet();
+        Owner owner = bloodTest.getOwner();
+
+        if (bloodTest.getResults() == null || bloodTest.getResults().isEmpty()) {
+            System.out.println("Nessun risultato trovato per il BloodTest: " + bloodTestId);
+        }
+
+        // mappo i risultati in resultvaluedto
+        List<ResultValueDTO> resultValues = bloodTest.getResults().stream()
                 .map(result -> {
                     List<DiseaseTest> diseaseTests = findDiseaseTestsForResult(result);
-
                     List<String> pathologicalConditions = new ArrayList<>();
                     Double referenceValue = result.getValue();
                     List<String> unit = null;
 
-                    for (DiseaseTest diseaseTest : diseaseTests) {
+                    AbnormalValueLevel abnormalLevel = null; // inizializzo abnormal level come null
 
+                    for (DiseaseTest diseaseTest : diseaseTests) { // itero su disease test per confrontare con il valore di riferimento e aggiungere una patologia se presente
                         if (referenceValue == null) {
-                            // -1 non puo essere valido come valore di riferimento e non puo essere null
                             referenceValue = diseaseTest.getThreshold() != -1 ? (double) diseaseTest.getThreshold() : null;
-
                         }
 
+                        if (result.getValue() != -1) {
+                            if (result.getValue() > diseaseTest.getThreshold()) {
+                                abnormalLevel = AbnormalValueLevel.HIGH;
+                            } else if (result.getValue() < diseaseTest.getThreshold()) {
+                                abnormalLevel = AbnormalValueLevel.LOW;
+                            }
+                        }
                         pathologicalConditions.add(diseaseTest.getDisease().getDiseaseName());
                     }
 
@@ -93,22 +115,45 @@ public class ResultController {
 
                     if (result.getValuesName() != null) {
                         UUID valuesNameId = result.getValuesName().getId();
-                        //ricavo l'unita dalla repository
-                        unit = normalValuesRepository.findUnitsByValuesNameId(valuesNameId);
+
+                        List<String> units = normalValuesRepository.findUnitsByValuesNameIdAndPetType(valuesNameId, bloodTest.getPetType());
+                        unit = Collections.singletonList(units.isEmpty() ? "N/A" : units.get(0));  // Prendi la prima unità corrispondente
                     }
+
+                    String abnormalLevelString = abnormalLevel != null ? abnormalLevel.name() : null;
+
+                    // se non ci sono patologie associate imposto a null
+                    String pathologicalConditionString = pathologicalConditions.isEmpty() ? null :
+                            String.join(", ", pathologicalConditions) + (abnormalLevelString != null ? " (" + abnormalLevelString + ")" : "");
 
                     return new ResultValueDTO(
                             result.getValue(),
                             result.getValuesName().getId(),
                             parameterName,
-                            referenceValue,
                             unit,
-                            String.join(", ", pathologicalConditions)
+                            pathologicalConditionString,
+                            abnormalLevel
                     );
                 })
                 .collect(Collectors.toList());
-    }
 
+        // restituisce completebloodtestdto
+        return new CompleteBloodTestDTO(
+                bloodTest.getId(),
+                bloodTest.getDateOfTest(),
+                bloodTest.getTestNumber(),
+                bloodTest.getPetType(),
+                pet.getName(),
+                pet.getBreed(),
+                pet.getGender(),
+                pet.getAge(),
+                owner.getName(),
+                owner.getSurname(),
+                owner.getDateOfBirth(),
+                owner.getEmail(),
+                resultValues
+        );
+    }
 
     private String getUnitFromNormalValues(UUID valuesNameId) {
         NormalValues normalValue = normalValuesRepository.findByValuesNameId(valuesNameId);
@@ -117,8 +162,13 @@ public class ResultController {
 
 
 
-    private List<DiseaseTest> findDiseaseTestsForResult(Result result) {
-        return diseaseTestRepository.findByResultsContains(result);
+    public List<DiseaseTest> findDiseaseTestsForResult(Result result) {
+        ValuesName abnormalValueName = result.getValuesName();
+
+        BloodTest bloodTest = result.getBloodTest();
+        PetType petType = bloodTest.getPetType();
+
+        return diseaseTestRepository.findByAbnormalValueNameAndPetType(abnormalValueName, petType);
     }
 
     private List<DiseaseTest> getAllDiseaseTests() {
