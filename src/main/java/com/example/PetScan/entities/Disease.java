@@ -15,10 +15,14 @@ public class Disease {
     private UUID id;
 
     private String diseaseName;
+    @Column(length = 1500)
     private String description;
     private String treatment;
     @Enumerated(EnumType.STRING)
     private PetType petType;
+
+    @OneToMany(mappedBy = "disease")
+    private List<Symptom> symptoms;
 
 
     public Disease() {
@@ -65,5 +69,13 @@ public class Disease {
 
     public void setPetType(PetType petType) {
         this.petType = petType;
+    }
+
+    public List<Symptom> getSymptoms() {
+        return symptoms;
+    }
+
+    public void setSymptoms(List<Symptom> symptoms) {
+        this.symptoms = symptoms;
     }
 }

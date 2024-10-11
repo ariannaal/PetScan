@@ -15,8 +15,9 @@ public record ResultValueDTO(
 
         String valueName,
         List<String> unit,
-        String pathologicalCondition,
-        AbnormalValueLevel abnormalLevel
+        List<PathologicalConditionDTO> pathologicalConditions,
+        AbnormalValueLevel abnormalLevel,
+        SymptomsDTO symptoms
 
 ) {
 }
