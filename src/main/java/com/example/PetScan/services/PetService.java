@@ -29,10 +29,10 @@ public class PetService {
     @Autowired
     private Cloudinary cloudinary;
 
-    public Pet savePet(NewPetDTO body) {
+    public Pet savePet(NewPetDTO body, UUID ownerId) {
 
-        Owner owner = ownerRepository.findById(body.ownerId())
-                .orElseThrow(() -> new NotFoundEx("Proprietario non trovato per ID: " + body.ownerId()));
+        Owner owner = ownerRepository.findById(ownerId)
+                .orElseThrow(() -> new NotFoundEx("Proprietario non trovato per ID: " + ownerId));
 
         Pet newPet = new Pet(
                 body.petType(),

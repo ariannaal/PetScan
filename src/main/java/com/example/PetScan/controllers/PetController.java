@@ -46,8 +46,21 @@ public class PetController {
             throw new BadRequestEx(validation.getAllErrors().toString());
         }
 
-        return petService.savePet(body);
+        // ottengo l'id del proprietario dall'access token
+        UUID ownerId = TokenManager.GetId(SecurityContextHolder.getContext());
+
+        NewPetDTO updatedBody = new NewPetDTO(
+                body.name(),
+                body.petType(),
+                body.breed(),
+                body.gender(),
+                body.age(),
+                body.dateOfBirth()
+        );
+
+        return petService.savePet(updatedBody, ownerId);
     }
+
 
     // GET http://localhost:3001/pets/{id}
     @GetMapping("/{id}")

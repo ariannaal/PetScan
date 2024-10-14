@@ -30,10 +30,7 @@ public record NewPetDTO(
         int age,
 
         @NotNull(message = "La data di nascita dell'animale e' obbligatoria!")
-        LocalDate dateOfBirth,
-
-        @NotNull(message = "L'id del proprietario e' obbligatorio!")
-        UUID ownerId
+        LocalDate dateOfBirth
 
 ) {
 }
