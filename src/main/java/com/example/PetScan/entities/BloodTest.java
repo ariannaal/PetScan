@@ -1,10 +1,13 @@
 package com.example.PetScan.entities;
 
 import com.example.PetScan.enums.PetType;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -19,6 +22,7 @@ public class BloodTest {
 
     @ManyToOne
     @JoinColumn(name = "pet_id")
+    @JsonManagedReference
     private Pet pet;
 
     @ManyToOne
@@ -31,7 +35,7 @@ public class BloodTest {
     private PetType petType;
 
     @OneToMany(mappedBy = "bloodTest")
-    private List<Result> results;
+    private Set<Result> results;
 
     public BloodTest() {
     }
@@ -88,11 +92,11 @@ public class BloodTest {
         this.petType = petType;
     }
 
-    public List<Result> getResults() {
+    public Set<Result> getResults() {
         return results;
     }
 
-    public void setResults(List<Result> results) {
+    public void setResults(Set<Result> results) {
         this.results = results;
     }
 }

@@ -35,17 +35,20 @@ public class ResultService {
 
         List<Result> savedResults = new ArrayList<>();
 
-        for (ResultValueDTO resultValueDTO : body.results()) { // itero sulla lista di NewResultDTO che contiene per ciascun parametro il nome e l'id e li recupero
+        for (ResultValueDTO resultValueDTO : body.results()) {
+            // Verifica se l'oggetto bloodTest è valido
+            if (bloodTest == null) {
+                System.out.println("BloodTest non trovato con ID: " + body.bloodTestId());
+                throw new NotFoundEx("Test del sangue non trovato con ID: " + body.bloodTestId());
+            }
 
             ValuesName valuesName = valuesNameRepository.findById(resultValueDTO.valuesNameId())
                     .orElseThrow(() -> new NotFoundEx("Nome del valore non trovato con ID: " + resultValueDTO.valuesNameId()));
 
-
             Result result = new Result(bloodTest, resultValueDTO.value(), valuesName);
-
             savedResults.add(resultRepository.save(result));
-
         }
+
         System.out.println("I risultati dell'esame con id " + body.bloodTestId() + " sono stati salvati con successo!");
         return savedResults;
     }
@@ -58,6 +61,10 @@ public class ResultService {
 
 
         return resultRepository.findByBloodTest(bloodTest);
+    }
+
+    public List<Result> getResultsByBloodTestId(UUID bloodTestId) {
+        return resultRepository.findByBloodTestId(bloodTestId);
     }
 
 

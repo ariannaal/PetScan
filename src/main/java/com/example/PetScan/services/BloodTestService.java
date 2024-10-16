@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class BloodTestService {
@@ -53,6 +54,20 @@ public class BloodTestService {
 
     public Optional<Owner> findByPet(Pet pet){
         return bloodTestRepository.findByPet(pet);
+    }
+
+    public List<BloodTest> findByPetId(UUID petId) {
+        return bloodTestRepository.findByPetId(petId);
+    }
+    public BloodTest findById(UUID petId) {
+        return bloodTestRepository.findById(petId).orElse(null);
+    }
+
+    public void deleteBloodTest(UUID bloodTestId) {
+        BloodTest bloodTest = bloodTestRepository.findById(bloodTestId)
+                .orElseThrow(() -> new IllegalArgumentException("Test del sangue non trovato con ID: " + bloodTestId));
+
+        bloodTestRepository.delete(bloodTest);
     }
 
 

@@ -2,10 +2,13 @@ package com.example.PetScan.entities;
 
 import com.example.PetScan.enums.Gender;
 import com.example.PetScan.enums.PetType;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -30,8 +33,6 @@ public class Pet {
     @JoinColumn(name = "owner_id")
     private Owner owner;
 
-    @OneToMany(mappedBy = "pet")
-    private List<BloodTest> bloodTests;
 
     public Pet() {
     }

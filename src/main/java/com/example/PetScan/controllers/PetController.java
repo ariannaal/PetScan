@@ -7,6 +7,7 @@ import com.example.PetScan.exceptions.BadRequestEx;
 import com.example.PetScan.exceptions.NotFoundEx;
 import com.example.PetScan.exceptions.UnauthorizedEx;
 import com.example.PetScan.payloads.NewPetDTO;
+import com.example.PetScan.payloads.UpdatePetDTO;
 import com.example.PetScan.repositories.OwnerRepository;
 import com.example.PetScan.repositories.PetRepository;
 import com.example.PetScan.services.PetService;
@@ -21,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
@@ -64,7 +66,7 @@ public class PetController {
 
     // GET http://localhost:3001/pets/{id}
     @GetMapping("/{id}")
-    private Pet getSinglePet(@PathVariable UUID id){
+    private Pet getSinglePet(@PathVariable UUID id) {
         return petService.findById(id);
     }
 
@@ -72,11 +74,11 @@ public class PetController {
     public List<Pet> getPets() {
         List<Pet> pets = new ArrayList<>();
 
-        try{
+        try {
             UUID ownerId = TokenManager.GetId(SecurityContextHolder.getContext());
             pets = petService.getPetsByOwnerId(ownerId);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
 
@@ -85,12 +87,36 @@ public class PetController {
 
     // POST http://localhost:3001/pets/{id}/picture
     @PostMapping("/{id}/picture")
-    public void uploadPicture(@PathVariable UUID id, @RequestParam("picture") MultipartFile image ) throws IOException {
+    public void uploadPicture(@PathVariable UUID id, @RequestParam("picture") MultipartFile image) throws IOException {
         Pet pet = petRepository.findById(id)
                 .orElseThrow(() -> new NotFoundEx("Animale non trovato per ID: " + id));
 
         petService.uploadPicture(id, image);
     }
 
+    @PostMapping("/{id}")
+    public Pet updatePet(
+            @PathVariable UUID id,
+            @RequestParam String name,
+            @RequestParam Integer age,
+            @RequestPart(value = "picture", required = false) MultipartFile picture) {
 
+        UpdatePetDTO petUpdateDTO = new UpdatePetDTO(name, age, picture != null ? picture.getOriginalFilename() : null);
+        System.out.println("Received UpdatePetDTO: " + petUpdateDTO);
+
+        try {
+
+            Pet updatedPet = petService.updatePet(id, petUpdateDTO, picture);
+            return updatedPet;
+        } catch (NotFoundEx e) {
+
+            throw new RuntimeException("Animale non trovato per ID: " + id);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Errore durante l'aggiornamento dell'animale: " + e.getMessage());
+        }
+    }
 }
+

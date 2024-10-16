@@ -21,4 +21,8 @@ public interface BloodTestRepository extends JpaRepository<BloodTest, UUID> {
 
     List<BloodTest> findByOwnerIdAndPetId(UUID ownerId, UUID petId);
 
+    List<BloodTest> findByPetId(UUID petId);
+
+
+
 }

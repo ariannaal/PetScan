@@ -4,6 +4,7 @@ import com.example.PetScan.entities.*;
 import com.example.PetScan.enums.AbnormalValueLevel;
 import com.example.PetScan.enums.PetType;
 import com.example.PetScan.exceptions.BadRequestEx;
+import com.example.PetScan.exceptions.NotFoundEx;
 import com.example.PetScan.payloads.*;
 import com.example.PetScan.repositories.DiseaseTestRepository;
 import com.example.PetScan.repositories.NormalValuesRepository;
@@ -48,7 +49,6 @@ public class ResultController {
         }
         resultService.saveResult(body);
 
-        // Restituisci un oggetto JSON vuoto
         return Collections.singletonMap("message", "Risultato salvato con successo");
     }
 
@@ -62,15 +62,13 @@ public class ResultController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Nessun BloodTest trovato con ID: " + bloodTestId);
         }
 
-        // Estrai i risultati e raccogli il primo sintomo associato
         for (Result result : bloodTest.getResults()) {
             SymptomsDTO resultSymptoms = fetchSymptomsForResult(result);
             if (resultSymptoms != null) {
-                return resultSymptoms; // Restituisce il sintomo trovato
+                return resultSymptoms;
             }
         }
 
-// Se non vengono trovati sintomi, puoi restituire null o un valore predefinito
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Nessun sintomo trovato per BloodTest ID: " + bloodTestId);
     }
 
@@ -101,7 +99,7 @@ public class ResultController {
 
         if (bloodTest == null) {
             System.out.println("Nessun BloodTest trovato con ID: " + bloodTestId);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Nessun BloodTest trovato con ID: " + bloodTestId);
+            throw new NotFoundEx("Nessun BloodTest trovato con ID: " + bloodTestId);
         }
 
         Pet pet = bloodTest.getPet();
@@ -111,7 +109,7 @@ public class ResultController {
             System.out.println("Nessun risultato trovato per il BloodTest: " + bloodTestId);
         }
 
-        // Mappo i risultati in ResultValueDTO
+        // mappo i risultati in ResultValueDTO
         List<ResultValueDTO> resultValues = bloodTest.getResults().stream()
                 .map(result -> {
                     List<DiseaseTest> diseaseTests = findDiseaseTestsForResult(result);
@@ -153,7 +151,6 @@ public class ResultController {
                             String.join(", ", pathologicalConditions.stream().map(PathologicalConditionDTO::name).collect(Collectors.toList())) +
                                     (abnormalLevelString != null ? " (" + abnormalLevelString + ")" : "");
 
-                    // Cambia qui per ricevere un solo sintomo
                     SymptomsDTO symptoms = fetchSymptomsForResult(result);
 
                     return new ResultValueDTO(
@@ -184,6 +181,8 @@ public class ResultController {
                 owner.getEmail(),
                 resultValues
         );
+
+
     }
 
     private String getUnitFromNormalValues(UUID valuesNameId) {
@@ -192,7 +191,7 @@ public class ResultController {
     }
 
     private SymptomsDTO fetchSymptomsForResult(Result result) {
-        // Inizializza la variabile per i sintomi
+
         SymptomsDTO symptomsDTO = null;
 
         List<DiseaseTest> diseaseTests = findDiseaseTestsForResult(result);
@@ -232,8 +231,6 @@ public class ResultController {
     private List<DiseaseTest> getAllDiseaseTests() {
         return diseaseTestRepository.findAll();
     }
-
-
 
 
 }

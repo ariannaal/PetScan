@@ -63,4 +63,9 @@ public class OwnerService {
         Owner found = this.findById(id);
         this.ownerRepository.delete(found);
     }
+
+    public Owner findOwnerById(UUID ownerId) {
+        return ownerRepository.findById(ownerId)
+                .orElseThrow(() -> new RuntimeException("Owner con id " + ownerId + " non trovato"));
+    }
 }
