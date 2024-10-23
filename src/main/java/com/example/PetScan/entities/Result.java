@@ -23,8 +23,9 @@ public class Result {
     @JoinColumn(name = "values_name_id")
     private ValuesName valuesName;
 
-    @ManyToMany(mappedBy = "results")
-    private List<DiseaseTest> diseaseTests;
+    @ManyToOne
+    @JoinColumn(name = "disease_test_id")
+    private DiseaseTest diseaseTest;
 
     public Result() {
     }

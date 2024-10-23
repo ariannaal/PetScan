@@ -3,6 +3,7 @@ package com.example.PetScan.entities;
 import com.example.PetScan.enums.AbnormalValueLevel;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,9 +19,8 @@ public class DiseaseTest {
     @JoinColumn(name = "disease_id")
     private Disease disease;
 
-    @ManyToMany
-    @JoinTable(joinColumns = @JoinColumn(name = "disease_test_id"), inverseJoinColumns = @JoinColumn(name = "result_id"))
-    private List<Result> results;
+    @OneToMany(mappedBy = "diseaseTest", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Result> results = new ArrayList<>();
 
     @OneToOne
     private ValuesName abnormalValueName;
