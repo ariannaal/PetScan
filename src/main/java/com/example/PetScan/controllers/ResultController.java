@@ -124,11 +124,14 @@ public class ResultController {
                             referenceValue = diseaseTest.getThreshold() != -1 ? (double) diseaseTest.getThreshold() : null;
                         }
 
+                        // Controllo che il valore non sia null prima di eseguire operazioni
                         if (result.getValue() != -1) {
-                            if (result.getValue() > diseaseTest.getThreshold()) {
-                                abnormalLevel = AbnormalValueLevel.HIGH;
-                            } else if (result.getValue() < diseaseTest.getThreshold()) {
-                                abnormalLevel = AbnormalValueLevel.LOW;
+                            if (referenceValue != null) {
+                                if (result.getValue() > referenceValue) {
+                                    abnormalLevel = AbnormalValueLevel.HIGH;
+                                } else if (result.getValue() < referenceValue) {
+                                    abnormalLevel = AbnormalValueLevel.LOW;
+                                }
                             }
                         }
 
@@ -140,29 +143,43 @@ public class ResultController {
                     if (result.getValuesName() != null) {
                         UUID valuesNameId = result.getValuesName().getId();
 
-                        List<String> units = normalValuesRepository.findUnitsByValuesNameIdAndPetType(valuesNameId, bloodTest.getPetType());
-                        unit = Collections.singletonList(units.isEmpty() ? "N/A" : units.get(0)); // Prendi la prima unità corrispondente
+                        List<String> units = (List<String>) normalValuesRepository.findUnitsByValuesNameIdAndPetType(valuesNameId, bloodTest.getPetType());
+                        unit = Collections.singletonList(units.isEmpty() ? "N/A" : units.get(0));
+
+                        List<NormalValues> normalValuesList = normalValuesRepository.findByValuesNameIdAndPetType(valuesNameId, bloodTest.getPetType());
+                        NormalValues normalValues = (normalValuesList.isEmpty()) ? null : normalValuesList.get(0);
+
+                        Double minValue = (normalValues != null) ? normalValues.getMinValue() : null;
+                        Double maxValue = (normalValues != null) ? normalValues.getMaxValue() : null;
+
+                        double minValueSafe = (minValue != null) ? minValue : 0.0;
+                        double maxValueSafe = (maxValue != null) ? maxValue : 0.0;
+
+                        String abnormalLevelString = abnormalLevel != null ? abnormalLevel.name() : null;
+
+                        // se non ci sono patologie associate imposto a null
+                        String pathologicalConditionString = pathologicalConditions.isEmpty() ? null :
+                                String.join(", ", pathologicalConditions.stream().map(PathologicalConditionDTO::name).collect(Collectors.toList())) +
+                                        (abnormalLevelString != null ? " (" + abnormalLevelString + ")" : "");
+
+                        SymptomsDTO symptoms = fetchSymptomsForResult(result);
+
+                        return new ResultValueDTO(
+                                result.getValue(),
+                                minValueSafe,
+                                maxValueSafe,
+                                result.getValuesName().getId(),
+                                parameterName,
+                                unit,
+                                pathologicalConditions,
+                                abnormalLevel,
+                                symptoms
+                        );
                     }
 
-                    String abnormalLevelString = abnormalLevel != null ? abnormalLevel.name() : null;
-
-                    // se non ci sono patologie associate imposto a null
-                    String pathologicalConditionString = pathologicalConditions.isEmpty() ? null :
-                            String.join(", ", pathologicalConditions.stream().map(PathologicalConditionDTO::name).collect(Collectors.toList())) +
-                                    (abnormalLevelString != null ? " (" + abnormalLevelString + ")" : "");
-
-                    SymptomsDTO symptoms = fetchSymptomsForResult(result);
-
-                    return new ResultValueDTO(
-                            result.getValue(),
-                            result.getValuesName().getId(),
-                            parameterName,
-                            unit,
-                            pathologicalConditions,
-                            abnormalLevel,
-                            symptoms
-                    );
+                    return null; // o un oggetto di default, se necessario
                 })
+                .filter(Objects::nonNull) // rimuovi eventuali risultati null
                 .collect(Collectors.toList());
 
         // restituisce CompleteBloodTestDTO
@@ -181,9 +198,8 @@ public class ResultController {
                 owner.getEmail(),
                 resultValues
         );
-
-
     }
+
 
     private String getUnitFromNormalValues(UUID valuesNameId) {
         NormalValues normalValue = normalValuesRepository.findByValuesNameId(valuesNameId);

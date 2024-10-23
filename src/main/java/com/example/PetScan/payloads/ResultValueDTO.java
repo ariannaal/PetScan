@@ -9,6 +9,8 @@ import java.util.UUID;
 public record ResultValueDTO(
 
         double value,
+        double minValue,
+        double maxValue,
 
         @NotNull(message = "L'id del valore e' obbligatorio!")
         UUID valuesNameId,

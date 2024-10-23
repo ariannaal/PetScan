@@ -1,5 +1,6 @@
 package com.example.PetScan.services;
 
+import com.example.PetScan.common.TokenManager;
 import com.example.PetScan.entities.Owner;
 import com.example.PetScan.exceptions.BadRequestEx;
 import com.example.PetScan.exceptions.NotFoundEx;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -67,5 +69,24 @@ public class OwnerService {
     public Owner findOwnerById(UUID ownerId) {
         return ownerRepository.findById(ownerId)
                 .orElseThrow(() -> new RuntimeException("Owner con id " + ownerId + " non trovato"));
+    }
+
+    public Owner updateOwner(Owner updatedOwner, SecurityContext securityContext) {
+        UUID ownerId = TokenManager.GetId(securityContext);
+
+        if (ownerId == null) {
+            throw new IllegalArgumentException("L'ID non può essere nullo");
+        }
+
+        Owner existingOwner = ownerRepository.findById(ownerId)
+                .orElseThrow(() -> new NotFoundEx("Proprietario non trovato"));
+
+        existingOwner.setName(updatedOwner.getName());
+        existingOwner.setSurname(updatedOwner.getSurname());
+        existingOwner.setEmail(updatedOwner.getEmail());
+        existingOwner.setDateOfBirth(updatedOwner.getDateOfBirth());
+        existingOwner.setGender(updatedOwner.getGender());
+
+        return ownerRepository.save(existingOwner);
     }
 }

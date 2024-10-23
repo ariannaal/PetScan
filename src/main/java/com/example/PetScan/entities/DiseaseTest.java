@@ -19,7 +19,7 @@ public class DiseaseTest {
     private Disease disease;
 
     @ManyToMany
-    @JoinTable(name = "disease_test_results", joinColumns = @JoinColumn(name = "disease_test_id"), inverseJoinColumns = @JoinColumn(name = "result_id"))
+    @JoinTable(joinColumns = @JoinColumn(name = "disease_test_id"), inverseJoinColumns = @JoinColumn(name = "result_id"))
     private List<Result> results;
 
     @OneToOne
