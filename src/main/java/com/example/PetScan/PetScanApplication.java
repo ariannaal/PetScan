@@ -19,7 +19,7 @@ public class PetScanApplication {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**")
-						.allowedOrigins("https://671aaf04c6e19e531ebe7eac--petscan.netlify.app", "http://localhost:5173")
+						.allowedOrigins("https://petscan.netlify.app", "http://localhost:5173")
 						.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 						.allowedHeaders("*")
 						.allowCredentials(true);
