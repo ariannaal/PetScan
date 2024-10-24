@@ -14,6 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.stream.Collectors;
+@CrossOrigin(origins = {"http://localhost:5173", "http://endless-fanya-petscan-9f9a2394.koyeb.app"})
 
 @RestController
 @RequestMapping("/auth")
