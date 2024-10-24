@@ -12,7 +12,8 @@ public class MyWebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins("https://petscan.netlify.app", "http://localhost:5173")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*");
+                .allowedHeaders("*")
+                .allowCredentials(true);  // Aggiungi questo se usi cookie o token
     }
 }
 
