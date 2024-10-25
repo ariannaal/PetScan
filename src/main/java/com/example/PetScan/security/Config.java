@@ -22,18 +22,18 @@ import java.util.Arrays;
 public class Config {
 
 
-    @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-
-        httpSecurity.formLogin(http -> http.disable());
-        httpSecurity.csrf(http -> http.disable());
-        httpSecurity.sessionManagement(http -> http.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        httpSecurity.authorizeHttpRequests(http -> http.requestMatchers("/**").permitAll());
-
-        httpSecurity.cors(Customizer.withDefaults());
-
-        return httpSecurity.build();
-    }
+//    @Bean
+//    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+//
+//        httpSecurity.formLogin(http -> http.disable());
+//        httpSecurity.csrf(http -> http.disable());
+//        httpSecurity.sessionManagement(http -> http.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+//        httpSecurity.authorizeHttpRequests(http -> http.requestMatchers("/**").permitAll());
+//
+//        httpSecurity.cors(Customizer.withDefaults());
+//
+//        return httpSecurity.build();
+//    }
 
     @Bean
     PasswordEncoder getBCrypt() {

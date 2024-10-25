@@ -21,7 +21,7 @@ public class PetScanApplication {
 	}
 
 	@Bean
-	public UrlBasedCorsConfigurationSource corsConfigurationSource() {
+	public UrlBasedCorsConfigurationSource customCorsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
 		configuration.setAllowedOrigins(Arrays.asList("https://petscan.netlify.app", "http://localhost:5173"));
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST"));
