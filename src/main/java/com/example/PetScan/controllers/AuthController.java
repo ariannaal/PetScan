@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin(origins = {"https://petscan.netlify.app", "http://localhost:5173"}, allowCredentials = "true")
+@CrossOrigin(origins = {"https://petscan.netlify.app", "http://localhost:5173"})
 public class AuthController {
 
     @Autowired
