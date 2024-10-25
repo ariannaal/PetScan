@@ -22,18 +22,18 @@ import java.util.Arrays;
 public class Config {
 
 
-//    @Bean
-//    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-//
-//        httpSecurity.formLogin(http -> http.disable());
-//        httpSecurity.csrf(http -> http.disable());
-//        httpSecurity.sessionManagement(http -> http.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-//        httpSecurity.authorizeHttpRequests(http -> http.requestMatchers("/**").permitAll());
-//
-//        httpSecurity.cors(Customizer.withDefaults());
-//
-//        return httpSecurity.build();
-//    }
+    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+
+        httpSecurity.formLogin(http -> http.disable());
+        httpSecurity.csrf(http -> http.disable());
+        httpSecurity.sessionManagement(http -> http.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        httpSecurity.authorizeHttpRequests(http -> http.requestMatchers("/**").permitAll());
+
+        httpSecurity.cors(Customizer.withDefaults());
+
+        return httpSecurity.build();
+    }
 
     @Bean
     PasswordEncoder getBCrypt() {
@@ -44,7 +44,7 @@ public class Config {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-         configuration.setAllowedOrigins(Arrays.asList("http://localhost:3001", "http://localhost:5173/"));
+         configuration.setAllowedOrigins(Arrays.asList("http://localhost:3001", "http://localhost:5173/", "https://petscan.netlify.app"));
 
         configuration.setAllowedMethods(Arrays.asList("*"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
