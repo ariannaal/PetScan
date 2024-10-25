@@ -20,28 +20,16 @@ public class PetScanApplication {
 		SpringApplication.run(PetScanApplication.class, args);
 	}
 
-//	@Bean
-//	public UrlBasedCorsConfigurationSource corsConfigurationSource() {
-//		CorsConfiguration configuration = new CorsConfiguration();
-//		configuration.setAllowedOrigins(Arrays.asList("https://petscan.netlify.app", "http://localhost:5173"));
-//		configuration.setAllowedMethods(Arrays.asList("GET", "POST"));
-//		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//		source.registerCorsConfiguration("/**", configuration);
-//		return source;
-//	}
-
 	@Bean
-	public CorsConfigurationSource corsConfigurationSource() {
+	public UrlBasedCorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
 		configuration.setAllowedOrigins(Arrays.asList("https://petscan.netlify.app", "http://localhost:5173"));
 		configuration.setAllowedMethods(Arrays.asList("GET", "POST"));
-		configuration.setAllowCredentials(true);
-		configuration.setAllowedHeaders(Arrays.asList("*"));
-
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", configuration);
 		return source;
 	}
+
 
 
 
